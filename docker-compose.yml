@@ -130,9 +130,22 @@ services:
     volumes:
       - /synology-nas/media/config/qbittorrent-config:/config
       - /synology-nas/media/data/torrents:/data/torrents
-    ports:
-      - "8080:8080"
-      - "6881:6881"
-      - "6881:6881/udp"
     restart: unless-stopped
+    network_mode: "service:gluetun"
+
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_CITIES=Stockholm,Amsterdam
+    ports:
+      - "8080:8080" # qbittorrent
+      - "6881:6881" # qbittorrent
+      - "6881:6881/udp" # qbittorrent
 
