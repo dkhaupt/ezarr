@@ -27,6 +27,9 @@ def take_boolean_input(default=True):
 def take_directory_input():
     while True:
         ans = input()
+        if len(ans) == 0:
+            return ''
+        
         if ans[0] == '/':
             if ans[-1] == '/':
                 return ans[:-1]
@@ -111,8 +114,12 @@ if services.__contains__('plex'):
     print('If you have a PleX claim token, enter it now. Otherwise, just press enter.', end=' ')
     plex_claim = input()
 
-print('Where would you like to keep your files?', end=' ')
-root_dir = take_directory_input()
+print('Where would you like to keep your media files?', end=' ')
+media_dir = take_directory_input()
+print('Where would you like to keep your config files (if different)?', end=' ')
+config_dir = take_directory_input()
+if not config_dir:
+    config_dir = media_dir
 
 compose = open('docker-compose.yml', 'w')
 compose.write(
@@ -120,9 +127,26 @@ compose.write(
     'version: "3.1"\n'
     'services:\n'
 )
+compose.write(
+    '  gluetun:\n'
+    '    image: qmcgaw/gluetun\n'
+    '    container_name: gluetun\n'
+    '    cap_add:\n'
+    '      - NET_ADMIN\n'
+    '    environment:\n'
+    '      - VPN_SERVICE_PROVIDER=mullvad\n'
+    '      - VPN_TYPE=wireguard\n'
+    '      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}\n'
+    '      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}\n'
+    '      - SERVER_CITIES=Stockholm,Amsterdam\n'
+    '    ports:\n'
+    '      - "8080:8080" # qbittorrent\n'
+    '      - "6881:6881" # qbittorrent\n'
+    '      - "6881:6881/udp" # qbittorrent\n\n'
+)
 
-container_config = ContainerConfig(root_dir, timezone, plex_claim=plex_claim)
-permission_setup = UserGroupSetup(root_dir=root_dir)
+container_config = ContainerConfig(media_dir=media_dir, config_dir=config_dir, timezone=timezone, plex_claim=plex_claim)
+permission_setup = UserGroupSetup(media_dir=media_dir, config_dir=config_dir)
 
 for service in services:
     try:
