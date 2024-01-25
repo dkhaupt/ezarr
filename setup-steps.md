@@ -6,6 +6,12 @@
 1. Follow the steps in "Important notes" in `README.md`
    - Use container names when connecting services to each other, rather than IP + port
    - When connecting services to qbittorrent, use `gluetun` since that's what the qbittorrent container is using for networking
+1. `qbittorrent` setup
+   - Add the following in "Run external program on torrent completion": `chmod -R 775 "%F"`
+   - Default save path: `/data/torrents`
+   - Set torrents to automatic management
+   - Add the correct download path to each Category, i.e. `tv-sonarr` should be set to `/data/torrents/tv`
+   - Set network interface to `tun0`
 
 
 ### Optional configuration
