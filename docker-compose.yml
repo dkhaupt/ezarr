@@ -1,138 +1,6 @@
 ---
 version: "3.1"
 services:
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr
-    environment:
-      - PUID=13001
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-    volumes:
-      - /synology-nas/media/config/sonarr-config:/config
-      - /synology-nas/media/data:/data
-    ports:
-      - "8989:8989"
-    restart: unless-stopped
-
-  radarr:
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
-    environment:
-      - PUID=13002
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-    volumes:
-      - /synology-nas/media/config/radarr-config:/config
-      - /synology-nas/media/data:/data
-    ports:
-      - "7878:7878"
-    restart: unless-stopped
-
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    environment:
-      - PUID=13003
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-    volumes:
-      - /synology-nas/media/config/lidarr-config:/config
-      - /synology-nas/media/data:/data
-    ports:
-      - "8686:8686"
-    restart: unless-stopped
-
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    environment:
-      - PUID=13004
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-    volumes:
-      - /synology-nas/media/config/readarr-config:/config
-      - /synology-nas/media/data:/data
-    ports:
-      - "8787:8787"
-    restart: unless-stopped
-
-  overseerr:
-    image: sctx/overseerr:latest
-    container_name: overseerr
-    environment:
-      - PUID=13009
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-    volumes:
-      - /synology-nas/media/config/overseerr-config:/app/config
-    ports:
-      - "5055:5055"
-    restart: unless-stopped
-
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:develop
-    container_name: prowlarr
-    environment:
-      - PUID=13006
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-    volumes:
-      - /synology-nas/media/config/prowlarr-config:/config
-    ports:
-      - "9696:9696"
-    restart: unless-stopped
-
-  plex:
-    image: lscr.io/linuxserver/plex:latest
-    container_name: plex
-    network_mode: host
-    environment:
-      - PUID=13010
-      - PGID=13000
-      - VERSION=docker
-      - PLEX_CLAIM=
-    volumes:
-      - /synology-nas/media/config/plex-config:/config
-      - /synology-nas/media/data/media:/media
-    restart: unless-stopped
-
-  tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
-    container_name: tautulli
-    depends_on:
-      - plex
-    environment:
-      - PUID=${UID}
-      - PGID=13000
-      - TZ=America/New_York
-    volumes:
-      - /synology-nas/media/config/tautulli-config:/config
-    ports:
-      - "8181:8181"
-    restart: unless-stopped
-
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    environment:
-      - PUID=13007
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-      - WEBUI_PORT=8080
-    volumes:
-      - /synology-nas/media/config/qbittorrent-config:/config
-      - /synology-nas/media/data/torrents:/data/torrents
-    restart: unless-stopped
-    network_mode: "service:gluetun"
-
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
@@ -148,4 +16,151 @@ services:
       - "8080:8080" # qbittorrent
       - "6881:6881" # qbittorrent
       - "6881:6881/udp" # qbittorrent
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=13001
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/sonarr-config:/config
+      - /synology-nas/media/data:/data
+    ports:
+      - "8989:8989"
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=13002
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/radarr-config:/config
+      - /synology-nas/media/data:/data
+    ports:
+      - "7878:7878"
+    restart: unless-stopped
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=13003
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/lidarr-config:/config
+      - /synology-nas/media/data:/data
+    ports:
+      - "8686:8686"
+    restart: unless-stopped
+
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=13004
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/readarr-config:/config
+      - /synology-nas/media/data:/data
+    ports:
+      - "8787:8787"
+    restart: unless-stopped
+
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=13009
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/overseerr-config:/app/config
+    ports:
+      - "5055:5055"
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    environment:
+      - PUID=13006
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/prowlarr-config:/config
+    ports:
+      - "9696:9696"
+    restart: unless-stopped
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=13010
+      - PGID=13000
+      - VERSION=docker
+      - PLEX_CLAIM=
+    volumes:
+      - /ezarr-config/plex-config:/config
+      - /synology-nas/media/data/media:/media
+    restart: unless-stopped
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    depends_on:
+      - plex
+    environment:
+      - PUID=${UID}
+      - PGID=13000
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/tautulli-config:/config
+    ports:
+      - "8181:8181"
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=13007
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+      - WEBUI_PORT=8080
+    volumes:
+      - /ezarr-config/qbittorrent-config:/config
+      - /synology-nas/media/data/torrents:/data/torrents
+    network_mode: "service:gluetun"
+    restart: unless-stopped
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=13011
+      - PGID=13000
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - /ezarr-config/sabnzbd-config:/config
+      - /synology-nas/media/data/usenet:/downloads
+    ports:
+      - "8081:8484"
+    restart: unless-stopped
 
