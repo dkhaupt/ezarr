@@ -143,6 +143,7 @@ compose.write(
     '      - "8080:8080" # qbittorrent\n'
     '      - "6881:6881" # qbittorrent\n'
     '      - "6881:6881/udp" # qbittorrent\n\n'
+    '    restart: unless-stopped'
 )
 
 container_config = ContainerConfig(media_dir=media_dir, config_dir=config_dir, timezone=timezone, plex_claim=plex_claim)

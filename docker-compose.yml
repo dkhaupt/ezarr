@@ -16,6 +16,7 @@ services:
       - "8080:8080" # qbittorrent
       - "6881:6881" # qbittorrent
       - "6881:6881/udp" # qbittorrent
+    restart: unless-stopped
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
