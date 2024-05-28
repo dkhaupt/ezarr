@@ -265,6 +265,6 @@ class ContainerConfig:
             '      - ' + self.config_dir + '/sabnzbd-config:/config\n'
             '      - ' + self.usenet_dir + ':/downloads\n'
             '    ports:\n'
-            '      - "8081:8080"\n'
+            '      - "8484:8080"\n'
             '    restart: unless-stopped\n\n'
         )

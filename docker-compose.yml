@@ -162,6 +162,5 @@ services:
       - /ezarr-config/sabnzbd-config:/config
       - /synology-nas/media/data/usenet:/downloads
     ports:
-      - "8081:8484"
+      - "8484:8080"
     restart: unless-stopped
-
