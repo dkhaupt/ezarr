@@ -12,6 +12,8 @@
    - Set torrents to automatic management
    - Add the correct download path to each Category, i.e. `tv-sonarr` should be set to `/data/torrents/tv`
    - Set network interface to `tun0`
+1. `sabnzbd` setup
+   - Edit `sabnzbd.ini` in the config directory - change `port` to `8484`
 
 
 ### Optional configuration

@@ -16,6 +16,7 @@ services:
       - "8080:8080" # qbittorrent
       - "6881:6881" # qbittorrent
       - "6881:6881/udp" # qbittorrent
+      - "8484:8484" # sabnzbd
     restart: unless-stopped
 
   sonarr:
@@ -158,9 +159,9 @@ services:
       - PGID=13000
       - UMASK=002
       - TZ=America/New_York
+      - HAS_IPV6=false
     volumes:
       - /ezarr-config/sabnzbd-config:/config
       - /synology-nas/media/data/usenet:/downloads
-    ports:
-      - "8484:8080"
+    network_mode: "service:gluetun"
     restart: unless-stopped
