@@ -162,6 +162,6 @@ services:
       - HAS_IPV6=false
     volumes:
       - /ezarr-config/sabnzbd-config:/config
-      - /synology-nas/media/data/usenet:/downloads
+      - /synology-nas/media/data/usenet:/data/usenet
     network_mode: "service:gluetun"
     restart: unless-stopped
