@@ -17,6 +17,8 @@ services:
       - "6881:6881" # qbittorrent
       - "6881:6881/udp" # qbittorrent
       - "8484:8484" # sabnzbd
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
     restart: unless-stopped
 
   sonarr:
