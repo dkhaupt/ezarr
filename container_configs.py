@@ -21,7 +21,7 @@ class ContainerConfig:
     def plex(self):
         return (
             '  plex:\n'
-            '    image: lscr.io/linuxserver/plex:latest\n'
+            '    image: lscr.io/linuxserver/plex@sha256:7f9a1d574958fc2f177c14ca190d4b811a58c274477f5bae8fb44ee676fb96bf\n'
             '    container_name: plex\n'
             '    network_mode: host\n'
             '    environment:\n'
@@ -38,7 +38,7 @@ class ContainerConfig:
     def tautulli(self):
         return (
             '  tautulli:\n'
-            '    image: lscr.io/linuxserver/tautulli:latest\n'
+            '    image: lscr.io/linuxserver/tautulli@sha256:13f03ecfc61a7af89d492677389771ac29682a72153ce08a5cd4faffbc0197e8\n'
             '    container_name: tautulli\n'
             '    depends_on:\n'
             '      - plex\n'
@@ -74,7 +74,7 @@ class ContainerConfig:
     def sonarr(self):
         return (
             '  sonarr:\n'
-            '    image: lscr.io/linuxserver/sonarr:latest\n'
+            '    image: lscr.io/linuxserver/sonarr@sha256:c19aa4ecdf03d73e1d5c901da33744cb7eb4d921f89bafed1ca264601d7fa224\n'
             '    container_name: sonarr\n'
             '    environment:\n'
             '      - PUID=13001\n'
@@ -92,7 +92,7 @@ class ContainerConfig:
     def radarr(self):
         return (
             '  radarr:\n'
-            '    image: lscr.io/linuxserver/radarr:latest\n'
+            '    image: lscr.io/linuxserver/radarr@sha256:119aaa4a4f7349bcd2a136c5373a0d7925b5479915c7dfe0c0ad352db2a6d438\n'
             '    container_name: radarr\n'
             '    environment:\n'
             '      - PUID=13002\n'
@@ -110,7 +110,7 @@ class ContainerConfig:
     def lidarr(self):
         return (
             '  lidarr:\n'
-            '    image: lscr.io/linuxserver/lidarr:latest\n'
+            '    image: lscr.io/linuxserver/lidarr@sha256:c74c32408fdf6e7926ad62641fc1a5544206ee65c33f2188bb179edb30e28f5a\n'
             '    container_name: lidarr\n'
             '    environment:\n'
             '      - PUID=13003\n'
@@ -125,24 +125,6 @@ class ContainerConfig:
             '    restart: unless-stopped\n\n'
         )
 
-    def readarr(self):
-        return (
-            '  readarr:\n'
-            '    image: lscr.io/linuxserver/readarr:develop\n'
-            '    container_name: readarr\n'
-            '    environment:\n'
-            '      - PUID=13004\n'
-            '      - PGID=13000\n'
-            '      - UMASK=002\n'
-            '      - TZ=' + self.timezone + '\n'
-            '    volumes:\n'
-            '      - ' + self.config_dir + '/readarr-config:/config\n'
-            '      - ' + self.media_dir + '/data:/data\n'
-            '    ports:\n'
-            '      - "8787:8787"\n'
-            '    restart: unless-stopped\n\n'
-        )
-
     def mylar3(self):
         return (
             '  mylar3:\n'
@@ -152,6 +134,7 @@ class ContainerConfig:
             '      - PUID=13005\n'
             '      - PGID=13000\n'
             '      - UMASK=002\n'
+            '      - TZ=' + self.timezone + '\n'
             '    volumes:\n'
             '      - ' + self.config_dir + '/mylar-config:/config\n'
             '      - ' + self.media_dir + '/data:/data\n'
@@ -166,10 +149,10 @@ class ContainerConfig:
             '    image: ghcr.io/advplyr/audiobookshelf:latest\n'
             '    container_name: audiobookshelf\n'
             '    environment:\n'
-            '      - AUDIOBOOKSHELF_UID=13009\n'
+            '      - AUDIOBOOKSHELF_UID=13013\n'
             '      - AUDIOBOOKSHELF_GID=13000\n'
             '    volumes:\n'
-            '      - ' + self.config_dir + '/audiobookshelf:/config\n'
+            '      - ' + self.config_dir + '/audiobookshelf-config:/config\n'
             '      - ' + self.media_dir + '/data/audiobooks:/audiobooks\n'
             '      - ' + self.media_dir + '/data/podcasts:/podcasts\n'
             '      - ' + self.media_dir + '/data/metadata:/metadata\n'
@@ -181,7 +164,7 @@ class ContainerConfig:
     def prowlarr(self):
         return (
             '  prowlarr:\n'
-            '    image: lscr.io/linuxserver/prowlarr:develop\n'
+            '    image: lscr.io/linuxserver/prowlarr@sha256:363769676eb4a58dc5f691fb95ff65b3ed6918654b90c15c676c988aa2921048\n'
             '    container_name: prowlarr\n'
             '    environment:\n'
             '      - PUID=13006\n'
@@ -198,7 +181,7 @@ class ContainerConfig:
     def qbittorrent(self):
         return (
             '  qbittorrent:\n'
-            '    image: lscr.io/linuxserver/qbittorrent:latest\n'
+            '    image: lscr.io/linuxserver/qbittorrent@sha256:a00b6a597a3832a1814cde0ef60abc55c94644f3f80902c3432f6af6de8d4a96\n'
             '    container_name: qbittorrent\n'
             '    environment:\n'
             '      - PUID=13007\n'
@@ -209,19 +192,14 @@ class ContainerConfig:
             '    volumes:\n'
             '      - ' + self.config_dir + '/qbittorrent-config:/config\n'
             '      - ' + self.torrent_dir + ':/data/torrents\n'
-            '    ports:\n'
-            '      - "8080:8080" # qbittorrent\n'
-            '      - "6881:6881" # qbittorrent\n'
-            '      - "6881:6881/udp" # qbittorrent\n'
-            '      - "8484:8484" # sabnzbd\n'
-            '    network_mode:"service:gluetun"'
+            '    network_mode: "service:gluetun"\n'
             '    restart: unless-stopped\n\n'
         )
 
     def overseerr(self):
         return (
             '  overseerr:\n'
-            '    image: sctx/overseerr:latest\n'
+            '    image: sctx/overseerr@sha256:6197516c9d7b58ccf113455e32aafb94df5d91995fe50e8c2cae6ba6c7c7b7de\n'
             '    container_name: overseerr\n'
             '    environment:\n'
             '      - PUID=13009\n'
@@ -234,7 +212,7 @@ class ContainerConfig:
             '      - "5055:5055"\n'
             '    restart: unless-stopped\n\n'
         )
-    
+
     def jellyseerr(self):
         return (
             '  jellyseerr:\n'
@@ -255,7 +233,7 @@ class ContainerConfig:
     def sabnzbd(self):
         return (
             '  sabnzbd:\n'
-            '    image: lscr.io/linuxserver/sabnzbd:latest\n'
+            '    image: lscr.io/linuxserver/sabnzbd@sha256:13d4404f1242f819e0cc2e294def5858def251a3609eb59404dad303075a564a\n'
             '    container_name: sabnzbd\n'
             '    environment:\n'
             '      - PUID=13011\n'

@@ -1,110 +1,80 @@
 import os
+import subprocess
 
 
 class UserGroupSetup:
     def __init__(self, media_dir='/', config_dir='/'):
         self.media_dir = media_dir
         self.config_dir = config_dir
-        os.system('sudo groupadd mediacenter -g 13000')
+        self._run(['sudo', 'groupadd', 'mediacenter', '-g', '13000'])
+
+    def _run(self, args):
+        subprocess.run(args, check=True)
+
+    def _owner(self):
+        return str(os.getuid()) + ':mediacenter'
+
+    def _data_subdirs(self):
+        return [self.media_dir + '/data/' + sub for sub in ('media', 'usenet', 'torrents')]
 
     def create_config_dir(self, service_name):
-        os.system(
-            f'sudo mkdir -p {self.config_dir}/{service_name}-config'
-            f' ; sudo chown -R {service_name}:mediacenter {self.config_dir}/{service_name}-config'
-            f' ; sudo chown $(id -u):mediacenter {self.config_dir}'
-        )
+        config_path = self.config_dir + '/' + service_name + '-config'
+        self._run(['sudo', 'mkdir', '-p', config_path])
+        self._run(['sudo', 'chown', '-R', service_name + ':mediacenter', config_path])
+        self._run(['sudo', 'chown', self._owner(), self.config_dir])
+
+    def _servarr(self, username, uid, subfolder):
+        self._run(['sudo', 'useradd', username, '-u', uid])
+        for path in self._data_subdirs():
+            self._run(['sudo', 'mkdir', '-pv', path + '/' + subfolder, '-m', '775'])
+        for path in self._data_subdirs():
+            self._run(['sudo', 'chown', '-R', username + ':mediacenter', path + '/' + subfolder])
+        self._run(['sudo', 'chown', self._owner(), self.media_dir + '/data'])
+        for path in self._data_subdirs():
+            self._run(['sudo', 'chown', self._owner(), path])
+        self.create_config_dir(username)
+        self._run(['sudo', 'usermod', '-a', '-G', 'mediacenter', username])
 
     def sonarr(self):
-        os.system(
-            '/bin/bash -c "sudo useradd sonarr -u 13001'
-            ' ; sudo mkdir -pv ' + self.media_dir + '/data/{media,usenet,torrents}/tv -m 775'
-            ' ; sudo chown -R sonarr:mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}/tv'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}"'
-        )
-        self.create_config_dir('sonarr')
-        os.system('sudo usermod -a -G mediacenter sonarr')
+        self._servarr('sonarr', '13001', 'tv')
 
     def radarr(self):
-        os.system(
-            '/bin/bash -c "sudo useradd radarr -u 13002'
-            ' ; sudo mkdir -pv ' + self.media_dir + '/data/{media,usenet,torrents}/movies -m 775'
-            ' ; sudo chown -R radarr:mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}/movies'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}"'
-        )
-        self.create_config_dir('radarr')
-        os.system('sudo usermod -a -G mediacenter radarr')
+        self._servarr('radarr', '13002', 'movies')
 
     def lidarr(self):
-        os.system(
-            '/bin/bash -c "sudo useradd lidarr -u 13003'
-            ' ; sudo mkdir -pv ' + self.media_dir + '/data/{media,usenet,torrents}/music -m 775'
-            ' ; sudo chown -R lidarr:mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}/music'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}"'
-        )
-        self.create_config_dir('lidarr')
-        os.system('sudo usermod -a -G mediacenter lidarr')
-
-    def readarr(self):
-        os.system(
-            '/bin/bash -c "sudo useradd readarr -u 13004'
-            ' ; sudo mkdir -pv ' + self.media_dir + '/data/{media,usenet,torrents}/books -m 775'
-            ' ; sudo chown -R readarr:mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}/books'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}"'
-        )
-        self.create_config_dir('readarr')
-        os.system('sudo usermod -a -G mediacenter readarr')
+        self._servarr('lidarr', '13003', 'music')
 
     def mylar3(self):
-        os.system(
-            '/bin/bash -c "sudo useradd mylar -u 13005'
-            ' ; sudo mkdir -pv ' + self.media_dir + '/data/{media,usenet,torrents}/comics -m 775'
-            ' ; sudo chown -R mylar:mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}/comics'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}"'
-        )
-        self.create_config_dir('mylar')
-        os.system('sudo usermod -a -G mediacenter mylar')
+        self._servarr('mylar', '13005', 'comics')
 
     def audiobookshelf(self):
-        os.system(
-            '/bin/bash -c "sudo useradd audiobookshelf -u 13009'
-            ' ; sudo mkdir -pv ' + self.media_dir + '/data/{media,usenet,torrents}/audiobooks -m 775'
-            ' ; sudo chown -R audiobookshelf:mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}/audiobooks'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data'
-            ' ; sudo chown $(id -u):mediacenter ' + self.media_dir + '/data/{media,usenet,torrents}"'
-        )
-        self.create_config_dir('audiobookshelf')
-        os.system('sudo usermod -a -G mediacenter audiobookshelf')
+        self._servarr('audiobookshelf', '13013', 'audiobooks')
 
     def prowlarr(self):
-        os.system('sudo useradd prowlarr -u 13006')
+        self._run(['sudo', 'useradd', 'prowlarr', '-u', '13006'])
         self.create_config_dir('prowlarr')
-        os.system('sudo usermod -a -G mediacenter prowlarr')
+        self._run(['sudo', 'usermod', '-a', '-G', 'mediacenter', 'prowlarr'])
 
     def qbittorrent(self):
-        os.system('sudo useradd qbittorrent -u 13007')
-        os.system('sudo usermod -a -G mediacenter qbittorrent')
+        self._run(['sudo', 'useradd', 'qbittorrent', '-u', '13007'])
+        self._run(['sudo', 'usermod', '-a', '-G', 'mediacenter', 'qbittorrent'])
 
     def overseerr(self):
-        os.system('sudo useradd overseerr -u 13009')
+        self._run(['sudo', 'useradd', 'overseerr', '-u', '13009'])
         self.create_config_dir('overseerr')
-        os.system('sudo usermod -a -G mediacenter overseerr')
+        self._run(['sudo', 'usermod', '-a', '-G', 'mediacenter', 'overseerr'])
 
     def plex(self):
-        os.system('sudo useradd plex -u 13010')
+        self._run(['sudo', 'useradd', 'plex', '-u', '13010'])
         self.create_config_dir('plex')
-        os.system('sudo usermod -a -G mediacenter plex')
+        self._run(['sudo', 'usermod', '-a', '-G', 'mediacenter', 'plex'])
 
     def sabnzbd(self):
-        os.system('sudo useradd sabnzbd -u 13011')
+        self._run(['sudo', 'useradd', 'sabnzbd', '-u', '13011'])
         self.create_config_dir('sabnzbd')
-        os.system('sudo usermod -a -G mediacenter sabnzbd')
+        self._run(['sudo', 'usermod', '-a', '-G', 'mediacenter', 'sabnzbd'])
 
     def jellyseerr(self):
-        os.system('sudo useradd jellyseerr -u 13012')
+        self._run(['sudo', 'useradd', 'jellyseerr', '-u', '13012'])
         self.create_config_dir('jellyseerr')
-        os.system('sudo usermod -a -G mediacenter jellyseerr')
+        self._run(['sudo', 'usermod', '-a', '-G', 'mediacenter', 'jellyseerr'])
