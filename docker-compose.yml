@@ -1,8 +1,7 @@
 ---
-version: "3.1"
 services:
   gluetun:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun@sha256:89e3cbe22e0d6f09a18d3e86269392fd9f7f08e8991040741e577f8f127cdfe4
     container_name: gluetun
     cap_add:
       - NET_ADMIN
@@ -22,7 +21,7 @@ services:
     restart: unless-stopped
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr@sha256:c19aa4ecdf03d73e1d5c901da33744cb7eb4d921f89bafed1ca264601d7fa224
     container_name: sonarr
     environment:
       - PUID=13001
@@ -37,7 +36,7 @@ services:
     restart: unless-stopped
 
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr@sha256:119aaa4a4f7349bcd2a136c5373a0d7925b5479915c7dfe0c0ad352db2a6d438
     container_name: radarr
     environment:
       - PUID=13002
@@ -52,7 +51,7 @@ services:
     restart: unless-stopped
 
   lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
+    image: lscr.io/linuxserver/lidarr@sha256:c74c32408fdf6e7926ad62641fc1a5544206ee65c33f2188bb179edb30e28f5a
     container_name: lidarr
     environment:
       - PUID=13003
@@ -66,23 +65,8 @@ services:
       - "8686:8686"
     restart: unless-stopped
 
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    environment:
-      - PUID=13004
-      - PGID=13000
-      - UMASK=002
-      - TZ=America/New_York
-    volumes:
-      - /ezarr-config/readarr-config:/config
-      - /synology-nas/media/data:/data
-    ports:
-      - "8787:8787"
-    restart: unless-stopped
-
   overseerr:
-    image: sctx/overseerr:latest
+    image: sctx/overseerr@sha256:6197516c9d7b58ccf113455e32aafb94df5d91995fe50e8c2cae6ba6c7c7b7de
     container_name: overseerr
     environment:
       - PUID=13009
@@ -96,7 +80,7 @@ services:
     restart: unless-stopped
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:develop
+    image: lscr.io/linuxserver/prowlarr@sha256:363769676eb4a58dc5f691fb95ff65b3ed6918654b90c15c676c988aa2921048
     container_name: prowlarr
     environment:
       - PUID=13006
@@ -110,7 +94,7 @@ services:
     restart: unless-stopped
 
   plex:
-    image: lscr.io/linuxserver/plex:latest
+    image: lscr.io/linuxserver/plex@sha256:7f9a1d574958fc2f177c14ca190d4b811a58c274477f5bae8fb44ee676fb96bf
     container_name: plex
     network_mode: host
     environment:
@@ -124,7 +108,7 @@ services:
     restart: unless-stopped
 
   tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
+    image: lscr.io/linuxserver/tautulli@sha256:13f03ecfc61a7af89d492677389771ac29682a72153ce08a5cd4faffbc0197e8
     container_name: tautulli
     depends_on:
       - plex
@@ -139,7 +123,7 @@ services:
     restart: unless-stopped
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/qbittorrent@sha256:a00b6a597a3832a1814cde0ef60abc55c94644f3f80902c3432f6af6de8d4a96
     container_name: qbittorrent
     environment:
       - PUID=13007
@@ -154,7 +138,7 @@ services:
     restart: unless-stopped
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:latest
+    image: lscr.io/linuxserver/sabnzbd@sha256:13d4404f1242f819e0cc2e294def5858def251a3609eb59404dad303075a564a
     container_name: sabnzbd
     environment:
       - PUID=13011

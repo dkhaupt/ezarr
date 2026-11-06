@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from container_configs import ContainerConfig
 from users_groups_setup import UserGroupSetup
 
@@ -29,7 +32,7 @@ def take_directory_input():
         ans = input()
         if len(ans) == 0:
             return ''
-        
+
         if ans[0] == '/':
             if ans[-1] == '/':
                 return ans[:-1]
@@ -49,8 +52,6 @@ print('Use Radarr? [Y/n]', end=" ")
 take_input('radarr', 'servarr')
 print('Use Lidarr? [Y/n]', end=" ")
 take_input('lidarr', 'servarr')
-print('Use Readarr? [Y/n]', end=" ")
-take_input('readarr', 'servarr')
 print('Use Mylar3? [Y/n]', end=" ")
 take_input('mylar3', 'servarr')
 print('Use Audiobookshelf? [Y/n]', end=" ")
@@ -121,15 +122,17 @@ config_dir = take_directory_input()
 if not config_dir:
     config_dir = media_dir
 
+if os.path.exists('docker-compose.yml'):
+    shutil.copyfile('docker-compose.yml', 'docker-compose.yml.bak')
+
 compose = open('docker-compose.yml', 'w')
 compose.write(
     '---\n'
-    'version: "3.1"\n'
     'services:\n'
 )
 compose.write(
     '  gluetun:\n'
-    '    image: qmcgaw/gluetun\n'
+    '    image: qmcgaw/gluetun@sha256:89e3cbe22e0d6f09a18d3e86269392fd9f7f08e8991040741e577f8f127cdfe4\n'
     '    container_name: gluetun\n'
     '    cap_add:\n'
     '      - NET_ADMIN\n'
@@ -142,8 +145,11 @@ compose.write(
     '    ports:\n'
     '      - "8080:8080" # qbittorrent\n'
     '      - "6881:6881" # qbittorrent\n'
-    '      - "6881:6881/udp" # qbittorrent\n\n'
-    '    restart: unless-stopped'
+    '      - "6881:6881/udp" # qbittorrent\n'
+    '      - "8484:8484" # sabnzbd\n'
+    '    devices:\n'
+    '      - "/dev/net/tun:/dev/net/tun"\n'
+    '    restart: unless-stopped\n\n'
 )
 
 container_config = ContainerConfig(media_dir=media_dir, config_dir=config_dir, timezone=timezone, plex_claim=plex_claim)

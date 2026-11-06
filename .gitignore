@@ -1,2 +1,4 @@
 *.pyc
 .env
+docker-compose.yml.bak
+.pytest_cache/
